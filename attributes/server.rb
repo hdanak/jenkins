@@ -27,6 +27,7 @@ default['jenkins']['server']['data_dir'] = File.join(node['jenkins']['server']['
 default['jenkins']['server']['log_dir']  = "/var/log/jenkins"
 
 default['jenkins']['server']['user'] = "jenkins"
+default['jenkins']['server']['create_user'] = true
 case node['platform_family']
 when "debian"
   default['jenkins']['server']['group'] = "nogroup"

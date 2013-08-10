@@ -26,8 +26,10 @@
 include_recipe "java"
 include_recipe "runit"
 
-user node['jenkins']['server']['user'] do
-  home node['jenkins']['server']['home']
+if node['jenkins']['server']['create_user']
+  user node['jenkins']['server']['user'] do
+    home node['jenkins']['server']['home']
+  end
 end
 
 home_dir = node['jenkins']['server']['home']
