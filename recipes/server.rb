@@ -85,6 +85,15 @@ ruby_block "block_until_operational" do
   action :nothing
 end
 
+remote_file File.join(home_dir, "jenkins.war") do
+  source "#{node['jenkins']['mirror']}/war/#{node['jenkins']['server']['version']}/jenkins.war"
+  checksum node['jenkins']['server']['war_checksum'] unless node['jenkins']['server']['war_checksum'].nil?
+  owner node['jenkins']['server']['user']
+  group node['jenkins']['server']['group']
+  notifies :restart, "runit_service[jenkins]"
+  notifies :create, "ruby_block[block_until_operational]"
+end
+
 node['jenkins']['server']['plugins'].each do |plugin|
   version = 'latest'
   if plugin.is_a?(Hash)
@@ -97,15 +106,6 @@ node['jenkins']['server']['plugins'].each do |plugin|
   unless Dir.exists? File.join(plugins_dir, plugin)
     jenkins_cli "install-plugin #{plugin}"
   end
-end
-
-remote_file File.join(home_dir, "jenkins.war") do
-  source "#{node['jenkins']['mirror']}/war/#{node['jenkins']['server']['version']}/jenkins.war"
-  checksum node['jenkins']['server']['war_checksum'] unless node['jenkins']['server']['war_checksum'].nil?
-  owner node['jenkins']['server']['user']
-  group node['jenkins']['server']['group']
-  notifies :restart, "runit_service[jenkins]"
-  notifies :create, "ruby_block[block_until_operational]"
 end
 
 # Only restart if plugins were added
