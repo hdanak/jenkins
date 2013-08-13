@@ -94,20 +94,7 @@ node['jenkins']['server']['plugins'].each do |plugin|
     name = plugin
   end
 
-  # Plugins installed from the Jenkins Update Center are written to disk with
-  # the `*.jpi` extension. Although plugins downloaded from the Jenkins Mirror
-  # have an `*.hpi` extension we will save the plugins with a `*.jpi` extension
-  # to match Update Center's behavior.
-  remote_file File.join(plugins_dir, "#{name}.jpi") do
-    source "#{node['jenkins']['mirror']}/plugins/#{name}/#{version}/#{name}.hpi"
-    owner node['jenkins']['server']['user']
-    group node['jenkins']['server']['group']
-    mode  0744
-    backup false
-    action :create_if_missing
-    notifies :restart, "runit_service[jenkins]"
-    notifies :create, "ruby_block[block_until_operational]"
-  end
+  jenkins_cli "install-plugin #{plugin}"
 end
 
 remote_file File.join(home_dir, "jenkins.war") do
