@@ -48,7 +48,7 @@ ssh_dir = File.join(home_dir, ".ssh")
   directory dir_name do
     owner node['jenkins']['server']['user']
     group node['jenkins']['server']['group']
-    mode '0700'
+    mode 0700
     recursive true
   end
 end
@@ -102,6 +102,7 @@ node['jenkins']['server']['plugins'].each do |plugin|
     source "#{node['jenkins']['mirror']}/plugins/#{name}/#{version}/#{name}.hpi"
     owner node['jenkins']['server']['user']
     group node['jenkins']['server']['group']
+    mode  0744
     backup false
     action :create_if_missing
     notifies :restart, "runit_service[jenkins]"
