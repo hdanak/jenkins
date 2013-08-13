@@ -94,7 +94,9 @@ node['jenkins']['server']['plugins'].each do |plugin|
     name = plugin
   end
 
-  jenkins_cli "install-plugin #{plugin}"
+  unless Dir.exists? File.join(plugins_dir, plugin)
+    jenkins_cli "install-plugin #{plugin}"
+  end
 end
 
 remote_file File.join(home_dir, "jenkins.war") do
